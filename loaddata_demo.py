@@ -13,7 +13,7 @@ class depthDataset(Dataset):
         self.frame = filename
         self.transform = transform
 
-    def __getitem__(self,idx):       
+    def __getitem__(self, idx):
         image = Image.open(self.frame)
         
         if self.transform:
