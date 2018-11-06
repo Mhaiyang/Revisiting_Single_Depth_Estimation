@@ -32,8 +32,8 @@ def readNyu2(filename):
 
     image_trans = depthDataset(filename,
                         transform=transforms.Compose([
-                        Scale([320, 240]),
-                        CenterCrop([304, 228]),
+                        # Scale([320, 240]),
+                        # CenterCrop([304, 228]),
                         ToTensor(),                                
                         Normalize(__imagenet_stats['mean'],
                                  __imagenet_stats['std'])

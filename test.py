@@ -42,7 +42,7 @@ def test(test_loader, model, thre):
         depth = torch.autograd.Variable(depth, volatile=True)
  
         output = model(image)
-        output = torch.nn.functional.upsample(output, size=[depth.size(2),depth.size(3)], mode='bilinear')
+        output = torch.nn.functional.upsample(output, size=[depth.size(2), depth.size(3)], mode='bilinear')
 
         depth_edge = edge_detection(depth)
         output_edge = edge_detection(output)
