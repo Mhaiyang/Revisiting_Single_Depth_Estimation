@@ -12,9 +12,9 @@ import pdb
 import skimage.io
 import skimage.transform
 
-import matplotlib.image
-import matplotlib.pyplot as plt
-plt.set_cmap("jet")
+# import matplotlib.image
+# import matplotlib.pyplot as plt
+# plt.set_cmap("jet")
 
 
 def main():
@@ -26,7 +26,7 @@ def main():
     image_dir = "/home/taylor/Mirror-Segmentation/data_640/train/image/"
     mask_dir = "/home/taylor/Mirror-Segmentation/data_640/train/mask/"
     imglist = os.listdir(image_dir)
-    output_dir = "/media/taylor/mhy/depth2/train/"
+    output_dir = "/media/taylor/mhy/depth_original/train/"
     for i, imgname in enumerate(imglist):
         print i
         mask_path = mask_dir + imgname[:-4] + "_json/label8.png"
@@ -45,34 +45,37 @@ def test(nyu2_loader, model, mask_path, output_path):
         min = np.min(depth)
         depth = (depth - min) / (max - min)
         depth = skimage.transform.resize(depth, [2*out.size(2), 2*out.size(3)], order=3)
+        depth = (depth * 255).astype(np.uint8)
+        skimage.io.imsave(output_path, depth)
+
         # depth = depth * (max - min) + min
         # depth = depth.astype(np.float32)
         # np.save(output_path, depth)
 
-        # process mirror region
-        mask = skimage.io.imread(mask_path)
-        height = mask.shape[0]
-        width = mask.shape[1]
-        num_obj = np.max(mask)
-
-        output_depth = depth
-        for index in range(num_obj):
-
-            mirror_depth = []
-            for j in range(height):
-                for i in range(width):
-                    if mask[j, i] == index + 1:
-                        mirror_depth.append(depth[j, i])
-
-            mean_mirror_depth = sum(mirror_depth) / len(mirror_depth)
-            print("mean depth of mirror {} is : {}".format(index, mean_mirror_depth))
-
-            for j in range(height):
-                for i in range(width):
-                    if mask[j, i] == index + 1:
-                        output_depth[j, i] = mean_mirror_depth
-
-        skimage.io.imsave(output_path, output_depth)
+        # # process mirror region
+        # mask = skimage.io.imread(mask_path)
+        # height = mask.shape[0]
+        # width = mask.shape[1]
+        # num_obj = np.max(mask)
+        #
+        # output_depth = depth
+        # for index in range(num_obj):
+        #
+        #     mirror_depth = []
+        #     for j in range(height):
+        #         for i in range(width):
+        #             if mask[j, i] == index + 1:
+        #                 mirror_depth.append(depth[j, i])
+        #
+        #     mean_mirror_depth = sum(mirror_depth) / len(mirror_depth)
+        #     print("mean depth of mirror {} is : {}".format(index, mean_mirror_depth))
+        #
+        #     for j in range(height):
+        #         for i in range(width):
+        #             if mask[j, i] == index + 1:
+        #                 output_depth[j, i] = mean_mirror_depth
+        #
+        # skimage.io.imsave(output_path, output_depth)
 
 
 def define_model(is_resnet, is_densenet, is_senet):
